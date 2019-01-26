@@ -49,7 +49,8 @@ The JSON response for this request:
                 "b": 12,
                 "a": 80,
                 "name": "srgba(48,6,12,0.314961)",
-                "count": 1
+                "count": 1,
+                "pageNumber": 1
             },
             .... A lot more colors ....
             {
@@ -58,7 +59,8 @@ The JSON response for this request:
                 "b": 102,
                 "a": 255,
                 "name": "srgba(149,96,102,1)",
-                "count": 1
+                "count": 1,
+                "pageNumber": 1
             }
         ]
     ],
@@ -66,7 +68,7 @@ The JSON response for this request:
 }
 ```
 In the response we get a list of colors that were found. The term 'colors' refers to sRGBA values that are not various shades of 
-gray, black or white.
+gray, black or white. The key `pageNumber` refers to what page of the PDF that each respective color was found on.
 
 Now let's try a black and white PDF.
 ```
@@ -82,7 +84,8 @@ The JSON response I receive for this request is:
     "id": 4,
     "fileName": "/srv/uploads/my_bw_document.pdf",
     "colors": [],
-    "pageCount": 0
+    "pageCount": 0,
+    "pageNumber": 1
 }
 ```
 This response is expected. Because it's a purely black/white/gray document, there are no 'colors' that would require 
