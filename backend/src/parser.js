@@ -25,7 +25,7 @@ function parseColors(uploadPath, callback) {
             if (lines[i].indexOf('pdf_page:') != -1 && page.length != 0) {
                 page.push(page);
                 page = [];
-                continue
+                continue;
             }
             
             // Get our count, RGBA and short name from the line
@@ -46,7 +46,8 @@ function parseColors(uploadPath, callback) {
                     "b": b,
                     "a": a,
                     "name": name,
-                    "count": count 
+                    "count": count,
+                    "pageNumber": pages.length + 1
                 });
             }
         }
@@ -57,7 +58,6 @@ function parseColors(uploadPath, callback) {
         callback({
             "fileName": uploadPath,
             "colors": pages,
-            "pageCount": pages.length
         });
     });
 }

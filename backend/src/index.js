@@ -68,7 +68,6 @@ app.post('/api/conversions', (req, res) => {
                     id: conversions.length + 1, 
                     fileName: result['fileName'], 
                     colors: result['colors'], 
-                    pageCount: result['pageCount']
                 };
                 conversions.push(conversion);
                 res.send(conversion);             
@@ -110,7 +109,6 @@ app.put('/api/conversions/:id', (req, res) => {
                 
                 conversion.fileName = result['fileName'];
                 conversion.colors = result['colors'];
-                conversion.pageCount = result['pageCount'];
                 
                 res.send(conversion);             
             });
