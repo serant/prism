@@ -1,25 +1,30 @@
 # How to Run Locally
 
 1. Install Docker CE (https://docs.docker.com/install/) and ensure the Docker Daemon is running.
-2. Now build the container by running `build.sh` while the working directory is `prism/backend`.
+2. Now build the container by running `docker build -t prism:latest .` while the working directory is `prism/backend/srv`.
 ```
-/Users/seranthirugnanam/Develop/prism/backend
-SERAN-PC2:backend seranthirugnanam$ ./build.sh 
-Sending build context to Docker daemon  54.63MB
+SERAN-PC2:srv seranthirugnanam$ docker build -t primsm:latest .
+Sending build context to Docker daemon  15.12MB
 Step 1/7 : FROM centos:7
- ... Build will continue ...
-Step 7/7 : CMD node index.js
- ---> Running in e9773199e711
-Removing intermediate container e9773199e711
- ---> d66775296e3a
-Successfully built d66775296e3a
-Successfully tagged prism:latest
+ ---> 1e1148e4cc2c
+Step 2/7 : WORKDIR /root
+ ---> Using cache
+ ---> 6713ec0eabde
+
+    ... build will continue ...
+
+Step 7/7 : CMD node server.js
+ ---> Using cache
+ ---> 1b762edcaa61
+Successfully built 1b762edcaa61
+Successfully tagged primsm:latest
 ```
-3. Run the container by executing `run.sh` and the container will start running and listening on port 3000.
+3. Now go into the backend directory and run `docker-compose up -d` to start the database and route handler which listens on port 3000.
 ```
-SERAN-PC2:backend seranthirugnanam$ ./run.sh 
-Error response from daemon: Cannot kill container: prism_app: No such container: prism_app
-SERAN-PC2:backend seranthirugnanam$ Listening on port 3000...
+SERAN-PC2:backend seranthirugnanam$ docker-compose up -d
+Starting mongo ... done
+Starting prism-srv ... done
+SERAN-PC2:backend seranthirugnanam$ 
 ```
 
 4. Point your browser to http://localhost:3000/api/ and you should see:
@@ -91,3 +96,13 @@ The JSON response I receive for this request is:
 This response is expected. Because it's a purely black/white/gray document, there are no 'colors' that would require 
 a color printer to print. Therefore, the `"colors"` field is empty. The `pageCount` is 0 because we found no sRGBA colors (that are 
 not shades of gray or black/white). 
+
+
+# Stopping the Service
+To stop the system, go to the backened directory and run `docker-compose stop`.
+```
+SERAN-PC2:backend seranthirugnanam$ docker-compose stop 
+Stopping prism-srv ... done
+Stopping mongo     ... done
+SERAN-PC2:backend seranthirugnanam$ 
+```
