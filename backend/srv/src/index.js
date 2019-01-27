@@ -17,7 +17,7 @@ app.use(upload());
 
 mongoose.
     connect(
-        'mongodb://mongo:27017/expressmongo',
+        process.env.MONGO_ENDPOINT,
         { useNewUrlParser: true }
     )
     .then(() => console.log('MongoDB Connected'))
@@ -197,7 +197,7 @@ app.delete('/api/conversions/:id', (req, res) => {
 // | | \ \| |__| | |\  |
 // |_|  \_\\____/|_| \_|
                      
-const port = process.env.PORT || 3000;
+const port = process.env.API_PORT || 3000;
 
 app.listen(port, () => {
     console.info(`Listening on port ${port}...`);
