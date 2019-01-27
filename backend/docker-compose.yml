@@ -6,7 +6,8 @@ services:
     restart: always
     container_name: prism-srv
     environment:
-      - MONGO_ENDPOINT="mongodb://mongo:27017/expressmongo"
+      - MONGO_ENDPOINT=mongodb://mongo:27017/expressmongo
+      - PDF_UPLOAD_PATH=/opt/uploads
       - API_PORT=3000
     ports:
       - "3000:3000"
