@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  app:
+    image: prism:latest
+    restart: always
+    container_name: prism-srv
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
+    networks:
+      - backend
+
+  mongo:
+    restart: always
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-volume:/data/db
+    networks:
+      - backend
+    
+networks:
+  backend:
+
+volumes:
+  db-volume:
