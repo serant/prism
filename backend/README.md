@@ -96,3 +96,13 @@ The JSON response I receive for this request is:
 This response is expected. Because it's a purely black/white/gray document, there are no 'colors' that would require 
 a color printer to print. Therefore, the `"colors"` field is empty. The `pageCount` is 0 because we found no sRGBA colors (that are 
 not shades of gray or black/white). 
+
+
+# Stopping the Service
+To stop the system, go to the backened directory and run `docker-compose stop`.
+```
+SERAN-PC2:backend seranthirugnanam$ docker-compose stop 
+Stopping prism-srv ... done
+Stopping mongo     ... done
+SERAN-PC2:backend seranthirugnanam$ 
+```
