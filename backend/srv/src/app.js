@@ -6,7 +6,7 @@ const cors = require('cors');
 const mongoEndpoint = process.env.MONGO_ENDPOINT || 'mongodb://localhost:27017/expressmongo';
 const domainWhitelist = ['localhost'];
 
-const corsOptions = {
+let corsOptions = {
     origin: function(origin ,callback) {
         if (domainWhitelist.indexOf(origin) !== -1) {
             callback(null, true);
