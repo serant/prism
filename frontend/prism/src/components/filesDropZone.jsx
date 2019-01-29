@@ -1,42 +1,43 @@
 import React, { Component } from "react";
 import Dropzone from "react-dropzone";
-//import classNames from "classnames";
+import classNames from "classnames";
 
 class FilesDrop extends Component {
   onDrop = (acceptedFiles, rejectedFiles) => {
-    console.log(acceptedFiles);
+    //console.log(acceptedFiles);
+    const url = "http://localhost:3000/api/conversions";
+    fetch(url, {
+      method: "POST",
+      body: {
+        key: "conversionPdf",
+        value: acceptedFiles
+      }
+    }).then(function(response) {
+      console.log(response);
+      // return response.json();
+    });
   };
 
   render() {
     return (
-      <Dropzone accept="image/*">
-        {({
-          getRootProps,
-          getInputProps,
-          isDragActive,
-          isDragAccept,
-          isDragReject,
-          acceptedFiles,
-          rejectedFiles
-        }) => {
-          const baseStyle = {
-            width: 200,
-            height: 200,
-            borderWidth: 10,
-            borderColor: "#666",
-            borderStyle: "dashed",
-            borderRadius: 5
-          };
-
-          let styles = { ...baseStyle };
-          //styles = isDragActive ? { ...styles, ...this.activeStyle } : styles;
-          //styles = isDragReject ? { ...styles, ...this.rejectStyle } : styles;
-
+      <Dropzone onDrop={this.onDrop}>
+        {({ getRootProps, getInputProps, isDragActive }) => {
           return (
-            <div {...getRootProps()} style={styles}>
+            <div
+              {...getRootProps()}
+              className={classNames("dropzone", {
+                "dropzone--isActive": isDragActive
+              })}
+            >
               <input {...getInputProps()} />
-              <div>{isDragAccept ? "Drop" : "Drag"} files here...</div>
-              {isDragReject && <div>Unsupported file type...</div>}
+              {isDragActive ? (
+                <p>Drop files here...</p>
+              ) : (
+                <p>
+                  Try dropping some files here, or click to select files to
+                  upload.
+                </p>
+              )}
             </div>
           );
         }}
