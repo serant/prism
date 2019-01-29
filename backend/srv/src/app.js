@@ -17,7 +17,7 @@ mongoose.connect(
 const app = express();
 
 // Attach middleware
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use('/api/conversions', conversionRoutes);
 
