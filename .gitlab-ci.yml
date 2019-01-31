@@ -54,4 +54,5 @@ apply:
   dependencies:
     - plan
   artifacts:
-    - terraform.tfstate
+    paths:
+      - terraform.tfstate
