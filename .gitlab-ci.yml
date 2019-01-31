@@ -42,7 +42,7 @@ plan:
   stage: plan
   
   script:
-    - terraform plan --var-file=./ops/terraform.tfvars -out "planfile" ./ops
+    - terraform plan -var-file=./ops/terraform.tfvars -out "planfile" ./ops
   dependencies:
     - build
   artifacts:
@@ -64,7 +64,7 @@ apply:
 destroy:
   stage: destroy
   script:
-    - terraform destroy -state="terraform.tfstate" -input=false
+    - terraform destroy -state="terraform.tfstate" -auto-approve -var-file=./ops/terraform.tfvars ./ops
   dependencies:
     - apply
   artifacts:
