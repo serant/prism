@@ -2,14 +2,22 @@ image: docker:stable
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_DRIVER: overlay2
+  REPOSITORY_URL: 251487374146.dkr.ecr.us-east-2.amazonaws.com/prism-srv-staging
 
 services:
   - docker:dind
 
 before_script:
   - docker info
+  - apk add --no-cache curl jq python py-pip
+  - pip install awscli
+
+stages:
+  - build
 
 build:
   stage: build
   script:
+    - $(aws ecr get-login --no-include-email --region us-east-2)
     - docker build -t prism-srv ./backend/srv/
+    - docker push $REPOSITORY_URL
