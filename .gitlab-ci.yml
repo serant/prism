@@ -1,15 +1,15 @@
-job:
-  image: docker:stable
-  variables:
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_DRIVER: overlay2
+image: docker:stable
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
 
-  services:
-    - docker:dind
+services:
+  - docker:dind
 
-  before_script:
-    - docker info
+before_script:
+  - docker info
 
-  build:
-    stage: build
-      - docker build -t prism-srv ./srv
+build:
+  stage: build
+  script:
+    - docker build -t prism-srv ./srv
