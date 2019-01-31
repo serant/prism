@@ -1,5 +1,5 @@
 stages:
-  - build
+  # - build
   - plan
 
 build:
@@ -27,7 +27,7 @@ build:
 plan:
   stage: plan
   image:
-    name: hashicopr/terraform:light
+    name: hashicorp/terraform:light
     entrypoint:
       - '/usr/bin/env'
       - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin/bin'
