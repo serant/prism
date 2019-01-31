@@ -53,3 +53,5 @@ apply:
     - terraform apply -input=false "planfile"
   dependencies:
     - plan
+  artifacts:
+    - terraform.tfstate
