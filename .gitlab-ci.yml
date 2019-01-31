@@ -1,24 +1,49 @@
-image: docker:stable
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
-  REPOSITORY_URL: 251487374146.dkr.ecr.us-east-2.amazonaws.com/prism-srv-staging
-
-services:
-  - docker:dind
-
-before_script:
-  - docker info
-  - apk add --no-cache curl jq python py-pip
-  - pip install awscli
-
 stages:
   - build
+  - plan
 
 build:
   stage: build
+  image: docker:stable
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    REPOSITORY_URL: 251487374146.dkr.ecr.us-east-2.amazonaws.com/prism-srv-staging
+
+  services:
+    - docker:dind
+
+  before_script:
+    - docker info
+    - apk add --no-cache curl jq python py-pip
+    - pip install awscli
+
   script:
     - $(aws ecr get-login --no-include-email --region us-east-2)
     - docker build -t prism-srv ./backend/srv/
     - docker tag prism-srv:latest $REPOSITORY_URL
     - docker push $REPOSITORY_URL
+
+plan:
+  stage: plan
+  image:
+    name: hashicopr/terraform:light
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin/bin'
+  before_script:
+    - cd ops/
+    - sed -i.backup "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./terraform.tfvars
+    - sed -i.backup "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./terraform.tfvars
+    - terraform --version
+    - terraform init
+    
+  dependencies:
+    - build
+  
+  script:
+    - terraform plan -out "planfile"
+  
+  artifacts:
+    paths:
+      - planfile
