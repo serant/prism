@@ -20,4 +20,5 @@ build:
   script:
     - $(aws ecr get-login --no-include-email --region us-east-2)
     - docker build -t prism-srv ./backend/srv/
-    - docker push prism-srv:latest $REPOSITORY_URL
+    - docker tag prism-srv:latest $REPOSITORY_URL
+    - docker push $REPOSITORY_URL
