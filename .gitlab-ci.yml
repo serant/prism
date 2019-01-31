@@ -26,29 +26,29 @@ stages:
 #     - docker push $REPOSITORY_URL
 
 
-  plan:
-    stage: plan
-    image:
-      name: hashicorp/terraform:light
-      entrypoint:
-        - '/usr/bin/env'
-        - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-    before_script:
-      - /bin/sed -i "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./ops/terraform.tfvars
-      - /bin/sed -i "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
-      - terraform --version
-      - terraform init ./ops    
-    
-    script:
-      - terraform plan --var-file=./ops/terraform.tfvars -out "planfile" ./ops
-    
-    artifacts:
-      paths:
-        - planfile
+plan:
+  stage: plan
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  before_script:
+    - /bin/sed -i "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./ops/terraform.tfvars
+    - /bin/sed -i "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
+    - terraform --version
+    - terraform init ./ops    
+  
+  script:
+    - terraform plan --var-file=./ops/terraform.tfvars -out "planfile" ./ops
+  
+  artifacts:
+    paths:
+      - planfile
 
-  apply:
-    stage: apply
-    script:
-      - terraform apply -input=false "planfile"
-    dependencies:
-      - plan
+apply:
+  stage: apply
+  script:
+    - terraform apply -input=false "planfile"
+  dependencies:
+    - plan
