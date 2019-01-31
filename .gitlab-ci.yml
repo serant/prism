@@ -41,7 +41,7 @@ plan:
   #   - build
   
   script:
-    - terraform plan -out "planfile" ./ops
+    - terraform plan --var-file=./ops/terraform.tfvars -out "planfile" ./ops
   
   artifacts:
     paths:
