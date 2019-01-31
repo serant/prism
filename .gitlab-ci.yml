@@ -31,11 +31,11 @@ image:
   entrypoint:
     - '/usr/bin/env'
     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-  before_script:
-    - /bin/sed -i "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./ops/terraform.tfvars
-    - /bin/sed -i "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
-    - terraform --version
-    - terraform init ./ops    
+before_script:
+  - /bin/sed -i "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./ops/terraform.tfvars
+  - /bin/sed -i "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
+  - terraform --version
+  - terraform init ./ops    
 
 plan:
   stage: plan
