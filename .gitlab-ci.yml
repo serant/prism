@@ -59,3 +59,15 @@ apply:
     paths:
       - terraform.tfstate
   when: manual
+
+destroy:
+  stage: destroy
+  script:
+    - terraform destroy -state="terraform.tfstate" -input=false
+  dependencies:
+    - apply
+  artifacts:
+    when: always
+    paths:
+      - terraform.tfstate
+    when: manual
