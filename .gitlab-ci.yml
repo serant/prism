@@ -54,5 +54,6 @@ apply:
   dependencies:
     - plan
   artifacts:
+    when: always
     paths:
       - terraform.tfstate
