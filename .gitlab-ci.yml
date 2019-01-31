@@ -33,9 +33,9 @@ plan:
       - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
   before_script:
     - /bin/sed -i "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./ops/terraform.tfvars
-    # - /bin/sed -i.backup "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
-    # - terraform --version
-    # - terraform init ./ops
+    - /bin/sed -i "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
+    - terraform --version
+    - terraform init ./ops
     
   # dependencies:
   #   - build
