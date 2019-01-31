@@ -1,29 +1,29 @@
 stages:
-  # - build
+  - build
   - plan
   - apply
 
-# build:
-#   stage: build
-#   image: docker:stable
-#   variables:
-#     DOCKER_HOST: tcp://docker:2375/
-#     DOCKER_DRIVER: overlay2
-#     REPOSITORY_URL: 251487374146.dkr.ecr.us-east-2.amazonaws.com/prism-srv-staging
+build:
+  stage: build
+  image: docker:stable
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    REPOSITORY_URL: 251487374146.dkr.ecr.us-east-2.amazonaws.com/prism-srv-staging
 
-#   services:
-#     - docker:dind
+  services:
+    - docker:dind
 
-#   before_script:
-#     - docker info
-#     - apk add --no-cache curl jq python py-pip
-#     - pip install awscli
+  before_script:
+    - docker info
+    - apk add --no-cache curl jq python py-pip
+    - pip install awscli
 
-#   script:
-#     - $(aws ecr get-login --no-include-email --region us-east-2)
-#     - docker build -t prism-srv ./backend/srv/
-#     - docker tag prism-srv:latest $REPOSITORY_URL
-#     - docker push $REPOSITORY_URL
+  script:
+    - $(aws ecr get-login --no-include-email --region us-east-2)
+    - docker build -t prism-srv ./backend/srv/
+    - docker tag prism-srv:latest $REPOSITORY_URL
+    - docker push $REPOSITORY_URL
 
 
 image:
@@ -42,7 +42,8 @@ plan:
   
   script:
     - terraform plan --var-file=./ops/terraform.tfvars -out "planfile" ./ops
-  
+  dependencies:
+    - build
   artifacts:
     paths:
       - planfile
@@ -57,3 +58,4 @@ apply:
     when: always
     paths:
       - terraform.tfstate
+  when: manual
