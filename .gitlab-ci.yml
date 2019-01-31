@@ -1,0 +1,74 @@
+stages:
+  - build
+  - plan
+  - apply
+  - destroy
+
+build:
+  stage: build
+  image: docker:stable
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    REPOSITORY_URL: 251487374146.dkr.ecr.us-east-2.amazonaws.com/prism-srv-staging
+
+  services:
+    - docker:dind
+
+  before_script:
+    - docker info
+    - apk add --no-cache curl jq python py-pip
+    - pip install awscli
+
+  script:
+    - $(aws ecr get-login --no-include-email --region us-east-2)
+    - docker build -t prism-srv ./backend/srv/
+    - docker tag prism-srv:latest $REPOSITORY_URL
+    - docker push $REPOSITORY_URL
+
+
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+before_script:
+  - /bin/sed -i "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|" ./ops/terraform.tfvars
+  - /bin/sed -i "s|<AWS_SECRET_ACCESS_KEY>|$AWS_SECRET_ACCESS_KEY|" ./ops/terraform.tfvars
+  - terraform --version
+  - terraform init ./ops    
+
+plan:
+  stage: plan
+  
+  script:
+    - terraform plan -var-file=./ops/terraform.tfvars -out "planfile" ./ops
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - planfile
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -input=false "planfile"
+  dependencies:
+    - plan
+  artifacts:
+    when: always
+    paths:
+      - terraform.tfstate
+  when: manual
+
+destroy:
+  stage: destroy
+  script:
+    - terraform destroy -state="terraform.tfstate" -auto-approve -var-file=./ops/terraform.tfvars ./ops
+  dependencies:
+    - apply
+  artifacts:
+    when: always
+    paths:
+      - terraform.tfstate
+  when: manual
