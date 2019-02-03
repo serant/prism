@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const Conversion = require('../models/conversion');
 const parser = require('../tools/parser');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ const upload = multer({
 
 router.get('/', (req, res) => {
     Conversion.find()
-        .select('_id fileName colors')
+        .select('_id content')
         .exec()
         .then( docs => {
             const response = {
@@ -44,8 +45,7 @@ router.get('/', (req, res) => {
                 conversions: docs.map( doc => {
                     return {
                         _id: doc._id,
-                        fileName: doc.fileName,
-                        colors: doc.colors,
+                        content: doc.content,
                         request: {
                             type: 'GET',
                             url: `http://localhost:3000/api/conversions/${doc._id}`
@@ -70,15 +70,19 @@ router.post('/', upload.single('conversionPdf'),(req, res) => {
     
     // First parse the pdf to extract color values
     parser.parseColors(req.file.path)
-    
-    // Save entry in DB
+
+    // Delete file and save entry in DB
     .then( parseResult => {
+        fs.unlinkSync(req.file.path);
         return conversion = new Conversion({
             _id: mongoose.Types.ObjectId(),
-            fileName: parseResult['fileName'],
-            colors: parseResult['colors']
+            content: parseResult['content']
         }).save();
     })
+
+    .then(
+
+    )
 
     // Send appropriate response
     .then( result => {
@@ -86,8 +90,7 @@ router.post('/', upload.single('conversionPdf'),(req, res) => {
             message: "Created conversion successfully",
             createdConversion: {
                 _id: result._id,
-                fileName: result.fileName,
-                colors: result.colors
+                content: result.content
             },
             request: {
                 type: 'GET',
@@ -138,12 +141,12 @@ router.put('/:id', upload.single('conversionPdf'), (req, res) => {
     // First parse the pdf to extract color values
     parser.parseColors(req.file.path)
     
-    // Update entry in DB
+    // Delete file and update entry in DB
     .then( parseResult => {
+        fs.unlinkSync(req.file.path);
         return Conversion.updateOne({_id: id}, 
             { $set: { 
-                fileName: parseResult['fileName'], 
-                colors: parseResult['colors']
+                content: parseResult['content']
         }}).exec();
     })
 
