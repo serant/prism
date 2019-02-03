@@ -5,11 +5,7 @@ const ConversionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    fileName: {
-        type: String,
-        require: true
-    },
-    colors: {
+    content: {
         type: Array,
         require: true
     }

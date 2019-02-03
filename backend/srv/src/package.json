@@ -1,12 +1,12 @@
 {
   "name": "backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The server side API for PrismPDF",
   "main": "index.js",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "imagemagick": "^0.1.3",
+    "gm": "^1.23.1",
     "mongoose": "^5.4.7",
     "multer": "^1.4.1"
   },
