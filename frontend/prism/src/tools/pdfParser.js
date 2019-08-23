@@ -1,4 +1,7 @@
 import ImageStats from "./imageStats";
+import { getDocument } from "pdfjs-dist";
+import { PDFDocument } from "pdf-lib";
+let JSZip = require("jszip");
 
 // TODO
 // Need to predict when browser is overloaded and call backend services appropriately
@@ -103,7 +106,6 @@ function checkCanvasColor(pdfPage) {
 
         for (let i = 0; i < data.length; i += 4) {
           if (data[i] !== data[i + 1] || data[i + 1] !== data[i + 2]) {
-            console.log("color", data[i], data[i + 1], data[i + 2]);
             return resolve(true);
           }
         }
@@ -170,5 +172,71 @@ function _checkForColor(imgData, texts) {
     resolve(isColor);
   });
 }
+async function initializePDFs(pdf) {
+  return {
+    masterPDF: pdf,
+    bwPDF: await PDFDocument.create(),
+    colorPDF: await PDFDocument.create()
+  };
+}
 
-export { checkPDFPageColor, checkCanvasColor, checkTextColor };
+async function parsePDFColors(pdfData) {
+  let pdf = await getDocument(pdfData);
+
+  let bwPages = [];
+  let colorPages = [];
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    let pdfPage = await pdf.getPage(i);
+    let isColor = await checkPDFPageColor(pdfPage);
+
+    if (isColor && colorPages.indexOf(pdfPage.pageIndex) === -1)
+      colorPages.push(pdfPage.pageIndex);
+    else if (bwPages.indexOf(pdfPage.pageIndex) === -1)
+      bwPages.push(pdfPage.pageIndex);
+  }
+
+  return { bwPages, colorPages };
+}
+
+function copyPDFPages(sourcePDF, destPDF, pages) {
+  return new Promise((resolve, reject) => {
+    destPDF.copyPages(sourcePDF, pages).then(newPages => {
+      for (let i = 0; i < pages.length; i++) {
+        destPDF.addPage(newPages[i]);
+      }
+      resolve(destPDF);
+    });
+  });
+}
+
+async function splitPDF(data, bwPages, colorPages) {
+  const pdf = await PDFDocument.load(data);
+  let { masterPDF, colorPDF, bwPDF } = await initializePDFs(pdf);
+  const pdfs = await Promise.all([
+    copyPDFPages(masterPDF, bwPDF, bwPages),
+    copyPDFPages(masterPDF, colorPDF, colorPages)
+  ]);
+  return { bwPDF: pdfs[0], colorPDF: pdfs[1] };
+}
+
+function zipPDF(bwPDF, colorPDF) {
+  return Promise.all([
+    bwPDF.data.saveAsBase64(),
+    colorPDF.data.saveAsBase64()
+  ]).then(saveData => {
+    let zip = new JSZip();
+    zip.file(bwPDF.name, saveData[0], { base64: true });
+    zip.file(colorPDF.name, saveData[1], { base64: true });
+    return zip.generateAsync({ type: "blob" });
+  });
+}
+
+export {
+  checkPDFPageColor,
+  checkCanvasColor,
+  checkTextColor,
+  zipPDF,
+  parsePDFColors,
+  splitPDF
+};
