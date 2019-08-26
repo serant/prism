@@ -9,6 +9,9 @@ import { splitPDF, parsePDFColors, zipPDF } from "./tools/pdfParser";
 import { saveAs } from "file-saver";
 
 // Next steps
+// Deploy webiste
+// Put logo in nav bar
+// Connect to CDN
 // Enable multiple threads for parsing
 
 class App extends Component {
