@@ -2,4 +2,4 @@
 *terraform
 *terraform.tfstate
 *terraform.tfstate.backup
-./ops/terraform.tfvars
+node_modules
