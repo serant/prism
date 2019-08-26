@@ -3,15 +3,7 @@ class NavBar extends Component {
   render() {
     return (
       <nav className="navbar navbar-light bg-light">
-        <a href="#" className="navbar-brand">
-          <img
-            src={"../assets/logo.jpg"}
-            alt=""
-            width="133"
-            height="30"
-            className="d-inline-block align-top"
-          />
-        </a>
+        <span className="navbar-brand mb-0 h1">Prism</span>
       </nav>
     );
   }

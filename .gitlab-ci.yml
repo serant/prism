@@ -4,11 +4,11 @@ image: node:alpine
 # Announce the URL as per CRA docs
 # https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#advanced-configuration
 variables:
-  PUBLIC_URL: /prismwebapp
+  PUBLIC_URL: /prism
 # Cache node modules - speeds up future builds
 cache:
   paths:
-    - node_modules
+    - frontend/prism/node_modules
 
 # Name the stages involved in the pipeline
 stages:
@@ -19,13 +19,14 @@ stages:
 pages:
   stage: deploy
   script:
+    - cd frontend/prism
     - npm install # Install all dependencies
     - CI=false npm run build --prod # Build for prod
     - cp public/index.html public/404.html # Not necessary, but helps with https://medium.com/@pshrmn/demystifying-single-page-applications-3068d0555d46
-    - mv public _public # CRA and gitlab pages both use the public folder. Only do this in a build pipeline.
-    - mv build public # Move build files to public dir for Gitlab Pages
+    - mv public /_public # CRA and gitlab pages both use the public folder. Only do this in a build pipeline.
+    - mv build /public # Move build files to public dir for Gitlab Pages
   artifacts:
     paths:
-      - public # The built files for Gitlab Pages to serve
+      - /public # The built files for Gitlab Pages to serve
   only:
     - master # Only run on master branch
