@@ -4,11 +4,11 @@ image: node:alpine
 # Announce the URL as per CRA docs
 # https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#advanced-configuration
 variables:
-  PUBLIC_URL: /my-awesome-app
+  PUBLIC_URL: /prism
 # Cache node modules - speeds up future builds
 cache:
   paths:
-    - node_modules
+    - frontend/prism/node_modules
 
 # Name the stages involved in the pipeline
 stages:
@@ -28,6 +28,6 @@ pages:
     - ls -R .
   artifacts:
     paths:
-      - public # The built files for Gitlab Pages to serve
+      - frontend/prism/public # The built files for Gitlab Pages to serve
   only:
     - master # Only run on master branch
