@@ -2,4 +2,5 @@
 *terraform
 *terraform.tfstate
 *terraform.tfstate.backup
+credentials.csv
 node_modules
