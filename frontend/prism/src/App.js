@@ -5,8 +5,6 @@ import "./App.css";
 
 import NavBar from "./components/navBar";
 import PDFUpload from "./components/pdfUpload";
-import { splitPDF, parsePDFColors, zipPDF } from "./tools/pdfParser";
-import { saveAs } from "file-saver";
 
 // Next steps
 // Deploy webiste
@@ -15,50 +13,6 @@ import { saveAs } from "file-saver";
 // Enable multiple threads for parsing
 
 class App extends Component {
-  state = {
-    collate: false,
-    parsing: false
-  };
-
-  handleDrop = droppedPdf => {
-    console.log(droppedPdf);
-    let fileReader = new FileReader();
-    fileReader.onload = async () => {
-      let state = this.state;
-      state.parsing = true;
-      this.setState(state);
-      const data = new Uint8Array(fileReader.result);
-
-      let { bwPages, colorPages } = await parsePDFColors(data);
-
-      const { collate } = this.state;
-      if (collate) {
-        bwPages = bwPages.sort((a, b) => {
-          return a - b;
-        });
-        colorPages = colorPages.sort((a, b) => {
-          return a - b;
-        });
-      }
-      const { bwPDF, colorPDF } = await splitPDF(data, bwPages, colorPages);
-
-      const fileBase = droppedPdf.name.split(".pdf")[0];
-      const bwName = fileBase + " BW.pdf";
-      const colorName = fileBase + " Color.pdf";
-      const zipName = fileBase + ".zip";
-
-      const zip = await zipPDF(
-        { name: bwName, data: bwPDF },
-        { name: colorName, data: colorPDF }
-      );
-      await saveAs(zip, zipName);
-      state.parsing = false;
-      this.setState(state);
-    };
-
-    fileReader.readAsArrayBuffer(droppedPdf);
-  };
-
   render() {
     return (
       <React.Fragment>
@@ -73,10 +27,7 @@ class App extends Component {
             </p>
           </div>
           <div>
-            <PDFUpload
-              onDrop={document => this.handleDrop(document)}
-              parsing={this.state.parsing}
-            />
+            <PDFUpload />
           </div>
           <div className="container" style={{ padding: "50px" }}>
             <div className="row text-center">
@@ -123,6 +74,10 @@ class App extends Component {
         </main>
         <footer className="footer mt-auto py-3">
           <div className="container">
+            <p>
+              <sup>*</sup>Savings based on 40¢ per page for color printing and
+              10¢ per page for black/white printing.
+            </p>
             <span className="text-muted">Copyright 2019 PrismPDF</span>
           </div>
         </footer>

@@ -1,6 +1,9 @@
 import ImageStats from "./imageStats";
 import { getDocument } from "pdfjs-dist";
 import { PDFDocument } from "pdf-lib";
+import asyncPool from "tiny-async-pool";
+import { range } from "lodash";
+
 let JSZip = require("jszip");
 
 // TODO
@@ -180,22 +183,27 @@ async function initializePDFs(pdf) {
   };
 }
 
-async function parsePDFColors(pdfData) {
+async function parsePDFColors(pdfData, onProgress) {
   let pdf = await getDocument(pdfData);
 
   let bwPages = [];
   let colorPages = [];
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    let pdfPage = await pdf.getPage(i);
-    let isColor = await checkPDFPageColor(pdfPage);
+  const parsePage = pageNumber =>
+    new Promise(async (resolve, reject) => {
+      const pdfPage = await pdf.getPage(pageNumber);
+      const isColor = await checkPDFPageColor(pdfPage);
 
-    if (isColor && colorPages.indexOf(pdfPage.pageIndex) === -1)
-      colorPages.push(pdfPage.pageIndex);
-    else if (bwPages.indexOf(pdfPage.pageIndex) === -1)
-      bwPages.push(pdfPage.pageIndex);
-  }
+      if (isColor && colorPages.indexOf(pdfPage.pageIndex) === -1)
+        colorPages.push(pdfPage.pageIndex);
+      else if (bwPages.indexOf(pdfPage.pageIndex) === -1)
+        bwPages.push(pdfPage.pageIndex);
 
+      onProgress(bwPages, colorPages, pdf.numPages);
+      resolve(isColor);
+    });
+
+  await asyncPool(50, range(1, pdf.numPages + 1), parsePage);
   return { bwPages, colorPages };
 }
 
@@ -222,12 +230,12 @@ async function splitPDF(data, bwPages, colorPages) {
 
 function zipPDF(bwPDF, colorPDF) {
   return Promise.all([
-    bwPDF.data.saveAsBase64(),
-    colorPDF.data.saveAsBase64()
+    bwPDF.data.getPageCount() === 0 ? null : bwPDF.data.saveAsBase64(),
+    colorPDF.data.getPageCount() === 0 ? null : colorPDF.data.saveAsBase64()
   ]).then(saveData => {
     let zip = new JSZip();
-    zip.file(bwPDF.name, saveData[0], { base64: true });
-    zip.file(colorPDF.name, saveData[1], { base64: true });
+    if (saveData[0]) zip.file(bwPDF.name, saveData[0], { base64: true });
+    if (saveData[1]) zip.file(colorPDF.name, saveData[1], { base64: true });
     return zip.generateAsync({ type: "blob" });
   });
 }
