@@ -6,9 +6,9 @@ image: node:alpine
 variables:
   PUBLIC_URL: /PrismWebApp
 # Cache node modules - speeds up future builds
-cache:
-  paths:
-    - frontend/prism/node_modules
+# cache:
+#   paths:
+#     - frontend/prism/node_modules
 
 # Name the stages involved in the pipeline
 stages:
