@@ -6,12 +6,6 @@ import "./App.css";
 import NavBar from "./components/navBar";
 import PDFUpload from "./components/pdfUpload";
 
-// Next steps
-// Deploy webiste
-// Put logo in nav bar
-// Connect to CDN
-// Enable multiple threads for parsing
-
 class App extends Component {
   render() {
     return (

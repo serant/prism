@@ -39,8 +39,8 @@ const PDFUpload = () => {
     const bwName = fileBase + " BW.pdf";
     const colorName = fileBase + " Color.pdf";
     const zipName = fileBase + ".zip";
-
     setMessage("Saving Documents...");
+
     const zip = await zipPDF(
       { name: bwName, data: bwPDF },
       { name: colorName, data: colorPDF }
@@ -50,9 +50,11 @@ const PDFUpload = () => {
     setLoading(false);
   };
 
-  const onDrop = acceptedFiles => {
+  const onDropAccepted = acceptedFiles => {
+    console.log(isFileTooLarge);
+    console.log(acceptedFiles);
     const droppedPdf = acceptedFiles[0];
-
+    console.log(droppedPdf.size);
     // Added due to https://github.com/react-dropzone/react-dropzone/issues/276
     if (!droppedPdf.name.endsWith(".pdf")) return;
 
@@ -61,45 +63,56 @@ const PDFUpload = () => {
       await parsePdf(droppedPdf.name, fileReader.result);
     };
 
-    fileReader.readAsArrayBuffer(droppedPdf);
+    // fileReader.readAsArrayBuffer(droppedPdf);
   };
 
-  const getDropzoneContent = inputProps => {
-    if (isLoading) {
-      return (
-        <React.Fragment>
-          <button className="btn btn-success" type="button" disabled>
-            <span
-              className="spinner-border spinner-border-sm"
-              role="status"
-              aria-hidden="true"
-            ></span>
-            {message} ({progress} %)
-          </button>
-          <p>
-            ${(bwPages.length * 0.3).toFixed(2)} saved so far<sup>*</sup>
-          </p>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <button className="btn btn-success row">
-            <input {...inputProps} />
-            Choose PDF to Upload...
-          </button>
-          <p style={{ padding: "10px" }} className="card-text text-center">
-            {bwPages.length === 0
-              ? "or drag and drop one here"
-              : `$${(bwPages.length * 0.3).toFixed(2)} saved in total`}
-            <sup>*</sup>
-          </p>
-        </React.Fragment>
-      );
-    }
+  const maxSize = 31457280;
+
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragReject,
+    rejectedFiles
+  } = useDropzone({
+    onDropAccepted,
+    maxSize,
+    multiple: false,
+    accept: "application/pdf"
+  });
+  const isFileTooLarge =
+    rejectedFiles.length > 0 && rejectedFiles[0].size > maxSize;
+
+  const getButtonContent = () => {
+    return (
+      <React.Fragment>
+        <span
+          className={isLoading ? "spinner-border spinner-border-sm" : ""}
+          role="status"
+          aria-hidden="true"
+        ></span>
+        {isLoading && `${message} (${progress}) %`}
+        {!isLoading && "Choose a PDF to upload"}
+      </React.Fragment>
+    );
   };
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const getLabelContent = () => {
+    return (
+      <p className="col-12">
+        {!isDragActive &&
+          !isLoading &&
+          !isFileTooLarge &&
+          "or drag and drop one here"}
+
+        {isDragActive && !isDragReject && "drop here!"}
+        {isDragReject && "Only PDF documents less than 30 MB accepted!"}
+        {isFileTooLarge && "File size exceed maximum size of 30 MB"}
+        {isLoading && `${(bwPages.length * 0.3).toFixed(2)} saved so far`}
+        <sup>*</sup>
+      </p>
+    );
+  };
 
   return (
     <div
@@ -108,14 +121,20 @@ const PDFUpload = () => {
     >
       <div style={{ padding: "60px 30px" }} className="card-body">
         <div>
+          <input {...getInputProps()} />
           <i
             style={{ padding: "20px" }}
-            className="fa fa-4x fa-file-pdf-o row"
+            className="fa fa-4x fa-file-pdf-o col-12"
           />
+          <button
+            className="btn btn-success col-6"
+            type="button"
+            disabled={isLoading ? true : false}
+          >
+            {getButtonContent()}
+          </button>
+          {getLabelContent()}
         </div>
-        {getDropzoneContent(
-          getInputProps({ multiple: false, accept: "application/pdf" })
-        )}
       </div>
     </div>
   );

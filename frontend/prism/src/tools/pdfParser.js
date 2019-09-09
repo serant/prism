@@ -203,7 +203,7 @@ async function parsePDFColors(pdfData, onProgress) {
       resolve(isColor);
     });
 
-  await asyncPool(50, range(1, pdf.numPages + 1), parsePage);
+  await asyncPool(2, range(1, pdf.numPages + 1), parsePage);
   return { bwPages, colorPages };
 }
 
@@ -228,16 +228,17 @@ async function splitPDF(data, bwPages, colorPages) {
   return { bwPDF: pdfs[0], colorPDF: pdfs[1] };
 }
 
-function zipPDF(bwPDF, colorPDF) {
-  return Promise.all([
-    bwPDF.data.getPageCount() === 0 ? null : bwPDF.data.saveAsBase64(),
-    colorPDF.data.getPageCount() === 0 ? null : colorPDF.data.saveAsBase64()
-  ]).then(saveData => {
-    let zip = new JSZip();
-    if (saveData[0]) zip.file(bwPDF.name, saveData[0], { base64: true });
-    if (saveData[1]) zip.file(colorPDF.name, saveData[1], { base64: true });
-    return zip.generateAsync({ type: "blob" });
-  });
+async function zipPDF(bwPDF, colorPDF) {
+  let zip = new JSZip();
+  if (bwPDF.data.getPageCount() !== 0) {
+    const bwSave = await bwPDF.data.saveAsBase64();
+    zip.file(bwPDF.name, bwSave, { base64: true });
+  }
+  if (colorPDF.data.getPageCount() !== 0) {
+    const colorSave = await colorPDF.data.saveAsBase64();
+    zip.file(colorPDF.name, colorSave, { base64: true });
+  }
+  return zip.generateAsync({ type: "blob" });
 }
 
 export {
