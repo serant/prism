@@ -1,13 +1,20 @@
 import React, { useState } from "react";
-import { useDropzone } from "react-dropzone";
 import { splitPDF, parsePDFColors, zipPDF } from "../tools/pdfParser";
 import { saveAs } from "file-saver";
+import DropZone from "./dropZone";
+import ConversionZone from "./conversionZone";
+import LoadingZone from "./loadingZone";
+import DownloadZone from "./downloadZone";
 
 const PDFUpload = () => {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const [isDropped, setDropped] = useState(false);
+  const [isConverted, setConverted] = useState(false);
   const [bwPages, setBwPages] = useState([]);
+  const [pdf, setPdf] = useState(null);
+  const [zip, setZip] = useState({ zip: null, zipName: "" });
 
   const handleProgress = (bwPages, colorPages, totalPages) => {
     setBwPages(bwPages);
@@ -45,98 +52,44 @@ const PDFUpload = () => {
       { name: bwName, data: bwPDF },
       { name: colorName, data: colorPDF }
     );
+
+    setZip({ zip, zipName });
+
     await saveAs(zip, zipName);
 
     setLoading(false);
   };
 
-  const onDropAccepted = acceptedFiles => {
-    console.log(isFileTooLarge);
-    console.log(acceptedFiles);
-    const droppedPdf = acceptedFiles[0];
-    console.log(droppedPdf.size);
-    // Added due to https://github.com/react-dropzone/react-dropzone/issues/276
-    if (!droppedPdf.name.endsWith(".pdf")) return;
+  const handleDrop = pdf => {
+    setPdf(pdf);
+    setDropped(true);
+  };
 
+  const handleConversion = ({ collate }) => {
     let fileReader = new FileReader();
     fileReader.onload = async () => {
-      await parsePdf(droppedPdf.name, fileReader.result);
+      await parsePdf(pdf.name, fileReader.result);
+      setConverted(true);
     };
-
-    // fileReader.readAsArrayBuffer(droppedPdf);
+    fileReader.readAsArrayBuffer(pdf);
   };
 
-  const maxSize = 31457280;
-
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragReject,
-    rejectedFiles
-  } = useDropzone({
-    onDropAccepted,
-    maxSize,
-    multiple: false,
-    accept: "application/pdf"
-  });
-  const isFileTooLarge =
-    rejectedFiles.length > 0 && rejectedFiles[0].size > maxSize;
-
-  const getButtonContent = () => {
-    return (
-      <React.Fragment>
-        <span
-          className={isLoading ? "spinner-border spinner-border-sm" : ""}
-          role="status"
-          aria-hidden="true"
-        ></span>
-        {isLoading && `${message} (${progress}) %`}
-        {!isLoading && "Choose a PDF to upload"}
-      </React.Fragment>
-    );
-  };
-
-  const getLabelContent = () => {
-    return (
-      <p className="col-12">
-        {!isDragActive &&
-          !isLoading &&
-          !isFileTooLarge &&
-          "or drag and drop one here"}
-
-        {isDragActive && !isDragReject && "drop here!"}
-        {isDragReject && "Only PDF documents less than 30 MB accepted!"}
-        {isFileTooLarge && "File size exceed maximum size of 30 MB"}
-        {isLoading && `${(bwPages.length * 0.3).toFixed(2)} saved so far`}
-        <sup>*</sup>
-      </p>
-    );
+  const handleDownload = () => {
+    // return saveAs(...zip);
   };
 
   return (
-    <div
-      className="card bg-light text-center col-12 mx-auto rounded-lg"
-      {...getRootProps()}
-    >
-      <div style={{ padding: "60px 30px" }} className="card-body">
-        <div>
-          <input {...getInputProps()} />
-          <i
-            style={{ padding: "20px" }}
-            className="fa fa-4x fa-file-pdf-o col-12"
-          />
-          <button
-            className="btn btn-success col-6"
-            type="button"
-            disabled={isLoading ? true : false}
-          >
-            {getButtonContent()}
-          </button>
-          {getLabelContent()}
-        </div>
-      </div>
-    </div>
+    <React.Fragment>
+      {!isLoading && !isDropped && <DropZone onDrop={pdf => handleDrop(pdf)} />}
+      {!isLoading && isDropped && !isConverted && (
+        <ConversionZone
+          onStartConversion={settings => handleConversion(settings)}
+        />
+      )}
+
+      {isLoading && <LoadingZone percent={progress} message={message} />}
+      {isConverted && <DownloadZone onClick={() => handleDownload()} />}
+    </React.Fragment>
   );
 };
 
