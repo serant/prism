@@ -25,7 +25,6 @@ function checkTextColor(pdfPage) {
         resolve(isColor);
       })
       .catch(e => {
-        console.log(e);
         reject(e);
       });
   });
@@ -175,23 +174,27 @@ function _checkForColor(imgData, texts) {
     resolve(isColor);
   });
 }
-async function initializePDFs(pdf) {
-  return {
-    masterPDF: pdf,
-    bwPDF: await PDFDocument.create(),
-    colorPDF: await PDFDocument.create()
-  };
-}
 
-async function parsePDFColors(pdfData, onProgress) {
+async function parsePDFColors(pdfData, onProgress, doubleSided) {
   let pdf = await getDocument(pdfData);
 
   let bwPages = [];
   let colorPages = [];
 
-  const parsePage = pageNumber =>
+  // TODO: double sided mode
+  // Basically if the page is odd and colored, then the next page
+  // will also need to go in the color pdf
+
+  // First parse all the odd pages
+  // If double-sided then rule out all the even pages that are colored
+  // Then parse all the even pages that are bw
+
+  const oddPages = range(0, pdf.numPages, 2);
+  let evenPages = pdf.numPages === 1 ? [] : range(1, pdf.numPages, 2);
+
+  const parsePage = pageIndex =>
     new Promise(async (resolve, reject) => {
-      const pdfPage = await pdf.getPage(pageNumber);
+      const pdfPage = await pdf.getPage(pageIndex + 1);
       const isColor = await checkPDFPageColor(pdfPage);
 
       if (isColor && colorPages.indexOf(pdfPage.pageIndex) === -1)
@@ -203,7 +206,26 @@ async function parsePDFColors(pdfData, onProgress) {
       resolve(isColor);
     });
 
-  await asyncPool(2, range(1, pdf.numPages + 1), parsePage);
+  await asyncPool(2, oddPages, parsePage);
+
+  // If double sided, we know that the even pages that
+  // that are on the backside of a colored odd number page should
+  // also be colored
+  if (doubleSided)
+    colorPages.forEach(page => {
+      const i = evenPages.indexOf(page + 1);
+      if (i !== -1) colorPages.push(...evenPages.splice(i, 1));
+    });
+
+  if (evenPages.length > 0) await asyncPool(2, evenPages, parsePage);
+
+  if (doubleSided)
+    colorPages.forEach(page => {
+      if (page % 2) return;
+      const i = bwPages.indexOf(page - 1);
+      if (i !== -1) colorPages.push(...evenPages.splice(i, 1));
+    });
+
   return { bwPages, colorPages };
 }
 
@@ -218,26 +240,32 @@ function copyPDFPages(sourcePDF, destPDF, pages) {
   });
 }
 
-async function splitPDF(data, bwPages, colorPages) {
-  const pdf = await PDFDocument.load(data);
-  let { masterPDF, colorPDF, bwPDF } = await initializePDFs(pdf);
-  const pdfs = await Promise.all([
-    copyPDFPages(masterPDF, bwPDF, bwPages),
-    copyPDFPages(masterPDF, colorPDF, colorPages)
-  ]);
-  return { bwPDF: pdfs[0], colorPDF: pdfs[1] };
+async function splitPDF(data, documentMap) {
+  const masterPDF = await PDFDocument.load(data);
+
+  for (let i = 0; i < documentMap.length; i++) {
+    let destPDF = await PDFDocument.create();
+    await copyPDFPages(masterPDF, destPDF, documentMap[i]["pages"]);
+    documentMap[i]["data"] = destPDF;
+  }
+
+  return documentMap;
 }
 
-async function zipPDF(bwPDF, colorPDF) {
+async function zipPDFs(pdfs, collate) {
   let zip = new JSZip();
-  if (bwPDF.data.getPageCount() !== 0) {
-    const bwSave = await bwPDF.data.saveAsBase64();
-    zip.file(bwPDF.name, bwSave, { base64: true });
+
+  for (let i = 0; i < pdfs.length; i++) {
+    let folderName = collate
+      ? pdfs[i]["name"].indexOf(" Color.pdf") === -1
+        ? "BW"
+        : "Color"
+      : ".";
+
+    const save = await pdfs[i]["data"].saveAsBase64();
+    zip.file(`${folderName}/${pdfs[i]["name"]}`, save, { base64: true });
   }
-  if (colorPDF.data.getPageCount() !== 0) {
-    const colorSave = await colorPDF.data.saveAsBase64();
-    zip.file(colorPDF.name, colorSave, { base64: true });
-  }
+
   return zip.generateAsync({ type: "blob" });
 }
 
@@ -245,7 +273,7 @@ export {
   checkPDFPageColor,
   checkCanvasColor,
   checkTextColor,
-  zipPDF,
+  zipPDFs,
   parsePDFColors,
   splitPDF
 };
