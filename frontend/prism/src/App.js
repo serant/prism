@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "./App.css";
-import FeatureSet from "./components/common/feature";
+import FeatureSet from "./components/feature";
 
 import NavBar from "./components/navBar";
 import Converter from "./components/converter";

@@ -13,7 +13,7 @@ const Download = ({ onRedo, onDownload, saved }) => {
           </h5>
         )}
         <p className="col-12">
-          Your download should begin in a few moments.Or click{" "}
+          Your download should begin in a few moments. Or click{" "}
           <a href="#" onClick={onDownload}>
             here
           </a>{" "}
