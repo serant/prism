@@ -5,8 +5,9 @@ class NavBar extends Component {
       <nav className="navbar navbar-light bg-light">
         <img
           src={require("../assets/prismLogo.png")}
-          height="100px"
-          width="500px"
+          alt=""
+          // height="100px"
+          width="150px"
           style={{ paddingTop: "15px" }}
         />
       </nav>
