@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Helmet } from "react-helmet";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "./App.css";
@@ -11,6 +12,21 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <meta
+            name="description"
+            content="Split PDF documents into their colored and black/white counterparts. Save money when using commerical printing services!"
+          />
+          <meta name="author" content="PrismPDF" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <title>PrismPDF</title>
+          <link rel="canonical" href="https://prismpdf.com" />
+        </Helmet>
+
         <NavBar />
         <main className="container">
           <div className="row" style={{ padding: "30px" }}>
