@@ -1,0 +1,520 @@
+{
+  "suites": [
+    {
+      "suiteName": "bwPdf",
+      "suiteNumber": 1,
+      "description": "PDF with only BW pages. Conversion should not happen in any case.",
+      "inputPath": "./testData/1-bwPdf/1-Thirugnanam,Seran_MarketingReport2018.pdf",
+      "tests": [
+        {
+          "testName": "Double sided BW PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
+        },
+        {
+          "testName": "Collated BW PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
+        },
+        {
+          "testName": "Double sided collated BW PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
+        },
+        {
+          "testName": "BW PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "colorPdf",
+      "suiteNumber": 2,
+      "description": "PDF with only COLOR pages. Conversion should not happen in any case",
+      "inputPath": "./testData/2-colorPdf/2-ECE4429_Thirugnanam_Seran_Lab_4.pdf",
+      "tests": [
+        {
+          "testName": "Double sided color PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are colored."
+            }
+          }
+        },
+        {
+          "testName": "Collated color PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are colored."
+            }
+          }
+        },
+        {
+          "testName": "Double sided collated color PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are colored."
+            }
+          }
+        },
+        {
+          "testName": "color PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are colored."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "overSizedPdf",
+      "suiteNumber": 3,
+      "description": "Oversized PDF. Conversion should not happen in any case",
+      "inputPath": "./testData/3-overSizedPdf/Advanced Engineering Mathematics 5th edition.pdf",
+      "tests": [
+        {
+          "testName": "Double sided oversized PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#maxSizeDialog",
+              "output": "File size exceed maximum size of 30 MB"
+            }
+          }
+        },
+        {
+          "testName": "Collated oversized PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#maxSizeDialog",
+              "output": "File size exceed maximum size of 30 MB"
+            }
+          }
+        },
+        {
+          "testName": "Double sided collated oversized PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#maxSizeDialog",
+              "output": "File size exceed maximum size of 30 MB"
+            }
+          }
+        },
+        {
+          "testName": "oversized PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#maxSizeDialog",
+              "output": "File size exceed maximum size of 30 MB"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "maxSizePdf",
+      "suiteNumber": 4,
+      "description": "PDF at the limit of max size",
+      "inputPath": "./testData/4-maxSizePdf/4-Advanced Engineering Mathematics 5th edition.pdf",
+      "tests": [
+        {
+          "testName": "Double sided max size PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/4-maxSizePdf/4-1-ds/4-Advanced Engineering Mathematics 5th edition"
+          }
+        },
+        {
+          "testName": "Collated max size PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/4-maxSizePdf/4-2-cp/4-Advanced Engineering Mathematics 5th edition"
+          }
+        },
+        {
+          "testName": "Double sided collated max size PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/4-maxSizePdf/4-3-dscp/4-Advanced Engineering Mathematics 5th edition"
+          }
+        },
+        {
+          "testName": "max size PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/4-maxSizePdf/4-4-default/4-Advanced Engineering Mathematics 5th edition"
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "emptyPdf",
+      "suiteNumber": 5,
+      "description": "PDF with no pages. Conversion should not happen in any case",
+      "inputPath": "./testData/5-emptyPdf/5-OBC Integrated Business Services Application BW.pdf",
+      "tests": [
+        {
+          "testName": "Double sided Empty PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document is empty."
+            }
+          }
+        },
+        {
+          "testName": "Collated Empty PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document is empty."
+            }
+          }
+        },
+        {
+          "testName": "Double sided collated Empty PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document is empty."
+            }
+          }
+        },
+        {
+          "testName": "Empty PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document is empty."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "singlePageBw",
+      "suiteNumber": 6,
+      "description": "PDF with only one BW pages. Conversion should not happen in any case",
+      "inputPath": "./testData/6-singlePageBw/6-Receipt.pdf",
+      "tests": [
+        {
+          "testName": "Double sided Single Page BW PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Collated Single Page BW PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Double sided collated Single Page BW PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Single BW PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "singlePageColor",
+      "suiteNumber": 7,
+      "description": "PDF with only one color pages",
+      "inputPath": "./testData/7-singlePageColor/7-Introduction-to-Wood-and-Metal-Shop-Training-Theory_2015_09_16.pdf",
+      "tests": [
+        {
+          "testName": "Double sided Single Page Color PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Collated Single Page Color PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Double sided collated Single Page Color PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Single Page Color PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 5,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "Document must have more than one page."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "longPdf",
+      "suiteNumber": 8,
+      "description": "Very long pdf document",
+      "inputPath": "./testData/8-longPdf/8-Digital Systems Design Using VHDL (Charles Roth).pdf",
+      "tests": [
+        {
+          "testName": "Double sided long PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/8-longPdf/8-1-ds/8-Digital Systems Design Using VHDL (Charles Roth)"
+          }
+        },
+        {
+          "testName": "Collated long PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/8-longPdf/8-2-cp/8-Digital Systems Design Using VHDL (Charles Roth)"
+          }
+        },
+        {
+          "testName": "Double sided collated long PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/8-longPdf/8-3-dscp/8-Digital Systems Design Using VHDL (Charles Roth)"
+          }
+        },
+        {
+          "testName": "long PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 300,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/8-longPdf/8-4-default/8-Digital Systems Design Using VHDL (Charles Roth)"
+          }
+        }
+      ]
+    },
+    {
+      "suiteName": "standardPdf",
+      "suiteNumber": 9,
+      "description": "Standard mixed pdf document (bbt report)",
+      "inputPath": "./testData/9-standardPdf/9-Bubble Tea Machine Final Report.pdf",
+      "tests": [
+        {
+          "testName": "Double sided standard PDF",
+          "testNumber": 1,
+          "settings": ["doubleSided"],
+          "timeout": 30,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/9-standardPdf/9-1-ds/9-Bubble Tea Machine Final Report"
+          }
+        },
+        {
+          "testName": "Collated standard PDF",
+          "testNumber": 2,
+          "settings": ["collate"],
+          "timeout": 30,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/9-standardPdf/9-2-cp/9-Bubble Tea Machine Final Report"
+          }
+        },
+        {
+          "testName": "Double sided collated standard PDF",
+          "testNumber": 3,
+          "settings": ["doubleSided", "collate"],
+          "timeout": 30,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/9-standardPdf/9-3-dscp/9-Bubble Tea Machine Final Report"
+          }
+        },
+        {
+          "testName": "standard PDF",
+          "testNumber": 4,
+          "settings": [],
+          "timeout": 30,
+          "output": {
+            "html": {
+              "selector": "#conversionCompleteHeader",
+              "output": "Conversion Complete!"
+            },
+            "pdf": "./testData/9-standardPdf/9-4-default/9-Bubble Tea Machine Final Report"
+          }
+        }
+      ]
+    }
+  ]
+}
