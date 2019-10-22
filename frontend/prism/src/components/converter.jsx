@@ -6,18 +6,25 @@ import { saveAs } from "file-saver";
 import ConversionZone from "./views/conversion";
 import LoadingZone from "./views/loading";
 import DownloadZone from "./views/download";
+import ErrorZone from "./views/error";
 
 const Converter = () => {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [isConverted, setConverted] = useState(false);
+  const [error, setError] = useState(null);
   const [savings, setSavings] = useState(0);
   const [download, setDownload] = useState({ zip: null, zipName: "" });
 
   const handleProgress = (bw, color, total) => {
     setProgress(calculateProgress(bw, color, total));
     setSavings(calculateSavings(bw));
+  };
+
+  const failConversion = reason => {
+    setError(reason);
+    setLoading(false);
   };
 
   const parsePdf = async (pdfName, pdfData, { collate, doubleSided }) => {
@@ -31,6 +38,14 @@ const Converter = () => {
       (bw, color, total) => handleProgress(bw, color, total),
       doubleSided
     );
+    if (bwPages.length + colorPages.length === 0)
+      return failConversion("Document is empty.");
+    else if (bwPages.length + colorPages.length === 1)
+      return failConversion("Document must have more than one page.");
+    else if (bwPages.length === 0)
+      return failConversion("All pages in document are colored.");
+    else if (colorPages.length === 0)
+      return failConversion("All pages in document are black and white.");
 
     bwPages = sortPages(bwPages);
     colorPages = sortPages(colorPages);
@@ -70,6 +85,11 @@ const Converter = () => {
     await saveAs(zip, zipName);
   };
 
+  const handleRedo = () => {
+    setError(null);
+    setConverted(false);
+  };
+
   return (
     // Render the correct zone depending on which
     // stage of parsing we're in
@@ -83,9 +103,10 @@ const Converter = () => {
       {isLoading && (
         <LoadingZone percent={progress} message={message} saved={savings} />
       )}
-      {isConverted && (
+      {error && <ErrorZone reason={error} onRedo={() => handleRedo()} />}
+      {isConverted && !error && (
         <DownloadZone
-          onRedo={() => setConverted(false)}
+          onRedo={() => handleRedo()}
           onDownload={() => handleDownload()}
           saved={savings}
         />

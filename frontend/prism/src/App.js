@@ -14,7 +14,7 @@ class App extends Component {
         <NavBar />
         <main className="container">
           <div className="row" style={{ padding: "30px" }}>
-            <h2>Split PDF Documents by Color</h2>
+            <h2 className="sub-heading">Split PDF Documents by Color</h2>
             <p>
               Save money when using pay-per-page printers. PrismPDF splits a PDF
               document into its color and black/white counterparts so that you

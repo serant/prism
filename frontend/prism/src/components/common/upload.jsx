@@ -35,13 +35,17 @@ const Upload = ({ onUpload, maxSize }) => {
 
         <i style={{ padding: "20px" }} className="fa fa-4x fa-file-o col-12" />
         {pdfName && <p className="text-center">{pdfName}</p>}
-        <Button className="col-12">Choose a PDF to upload</Button>
+        <Button id="pdfUploadButton" className="col-12">
+          Choose a PDF to upload
+        </Button>
         <p className="col-12">
           {!isDragActive && "or drag and drop one here..."}
           {isDragActive && !isDragReject && "drop here!"}
           {isDragReject && "Only PDF documents less than 30 MB accepted!"}
-          {isFileTooLarge && "File size exceed maximum size of 30 MB"}
         </p>
+        {isFileTooLarge && (
+          <p id="maxSizeDialog">{"File size exceed maximum size of 30 MB"}</p>
+        )}
       </div>
     </div>
   );
