@@ -180,14 +180,7 @@ async function parsePDFColors(pdfData, onProgress, doubleSided) {
 
   let bwPages = [];
   let colorPages = [];
-
-  // TODO: double sided mode
-  // Basically if the page is odd and colored, then the next page
-  // will also need to go in the color pdf
-
-  // First parse all the odd pages
-  // If double-sided then rule out all the even pages that are colored
-  // Then parse all the even pages that are bw
+  if (pdf.numPages === 0) return { bwPages, colorPages };
 
   const oddPages = range(0, pdf.numPages, 2);
   let evenPages = pdf.numPages === 1 ? [] : range(1, pdf.numPages, 2);

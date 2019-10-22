@@ -5,7 +5,9 @@ const Download = ({ onRedo, onDownload, saved }) => {
   return (
     <div className="container">
       <div className="row">
-        <h4 className="col-12 text-center">Conversion Complete!</h4>
+        <h4 id="conversionCompleteHeader" className="col-12 text-center">
+          Conversion Complete!
+        </h4>
         {saved > 0 && (
           <h5 className="col-12 text-center">
             You've saved ${saved}
