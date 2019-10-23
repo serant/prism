@@ -8,8 +8,12 @@ import FeatureSet from "./components/feature";
 import NavBar from "./components/navBar";
 import Converter from "./components/converter";
 
+import ReactGA from "react-ga";
+
 class App extends Component {
   render() {
+    ReactGA.initialize("UA-150776089-1");
+    ReactGA.pageview(window.location.pathname + window.location.search);
     return (
       <React.Fragment>
         <Helmet>
