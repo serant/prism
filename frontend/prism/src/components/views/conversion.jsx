@@ -16,11 +16,15 @@ const Conversion = ({ onStartConversion }) => {
     {
       name: "doubleSided",
       value: doubleSided,
+      description:
+        "Ensures b/w pages on the back of a color page are in the same pdf. Enable this if you plan to print double sided.",
       onChange: () => setDoubleSided(!doubleSided),
       label: "Double sided printing"
     },
     {
       name: "collate",
+      description:
+        "Each PDF will only have consecutive page numbers. Useful for printing long documents.",
       value: collate,
       onChange: () => setCollate(!collate),
       label: "Collate pages"
