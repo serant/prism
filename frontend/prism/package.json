@@ -19,7 +19,6 @@
     "react-dropzone": "^10.1.5",
     "react-ga": "^2.7.0",
     "react-helmet": "^5.2.1",
-    "react-pdf": "^4.1.0",
     "react-scripts": "3.0.1",
     "react-scrollspy": "^3.4.0",
     "tiny-async-pool": "^1.0.4"

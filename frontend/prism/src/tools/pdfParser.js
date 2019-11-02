@@ -1,10 +1,41 @@
 import ImageStats from "./imageStats";
-import { getDocument } from "pdfjs-dist";
+import pdfjs from "pdfjs-dist";
 import { PDFDocument } from "pdf-lib";
 import asyncPool from "tiny-async-pool";
 import { range } from "lodash";
+import { openSync } from "fs";
 
 let JSZip = require("jszip");
+const imageOps = {
+  beginInlineImage: 63,
+  beginImageData: 64,
+  endInlineImage: 65,
+  paintXObject: 66,
+  markPoint: 67,
+  markPointProps: 68,
+  beginMarkedContent: 69,
+  beginMarkedContentProps: 70,
+  endMarkedContent: 71,
+  beginCompat: 72,
+  endCompat: 73,
+  paintFormXObjectBegin: 74,
+  paintFormXObjectEnd: 75,
+  beginGroup: 76,
+  endGroup: 77,
+  beginAnnotations: 78,
+  endAnnotations: 79,
+  beginAnnotation: 80,
+  endAnnotation: 81,
+  paintJpegXObject: 82,
+  paintImageMaskXObject: 83,
+  paintImageMaskXObjectGroup: 84,
+  paintImageXObject: 85,
+  paintInlineImageXObject: 86,
+  paintInlineImageXObjectGroup: 87,
+  paintImageXObjectRepeat: 88,
+  paintImageMaskXObjectRepeat: 89,
+  paintSolidColorImageMask: 90
+};
 
 // TODO
 // Need to predict when browser is overloaded and call backend services appropriately
@@ -40,15 +71,38 @@ function _checkResolvedImage(pdfPage) {
   });
 }
 
-function checkPDFPageColor(pdfPage) {
+function checkPDFPageImageColor(pdfPage) {
+  return new Promise((resolve, reject) => {
+    pdfPage
+      .getOperatorList()
+      .then(opList => {
+        for (let i = 0; i < opList.fnArray.length; i++) {
+          if (Object.values(imageOps).indexOf(opList.fnArray[i]) > -1)
+            return checkPDFPageColor(pdfPage);
+        }
+        resolve(false);
+      })
+      .then(res => resolve(res));
+  });
+}
+
+function checkPDFPageColor(pdfPage, ignoreText) {
   const scale = 1.0;
-  const viewport = pdfPage.getViewport(scale);
+  const viewport = pdfPage.getViewport({ scale });
   const canvas = document.createElement("canvas");
   const canvasContext = canvas.getContext("2d");
   canvas.height = viewport.height;
   canvas.width = viewport.width;
 
   return new Promise((resolve, reject) => {
+    if (ignoreText) {
+      pdfPage.getOperatorList().then(opList => {
+        for (let i = 0; i < opList.fnArray.length; i++) {
+          if (Object.values(imageOps).indexOf(opList.fnArray[i]) > -1) return;
+        }
+        resolve(false);
+      });
+    }
     pdfPage
       .render({
         canvasContext,
@@ -77,7 +131,7 @@ function checkPDFPageColor(pdfPage) {
 
 function checkCanvasColor(pdfPage) {
   const scale = 1.0;
-  const viewport = pdfPage.getViewport(scale);
+  const viewport = pdfPage.getViewport({ scale });
   const canvas = document.createElement("canvas");
   const canvasContext = canvas.getContext("2d");
 
@@ -117,7 +171,8 @@ function checkCanvasColor(pdfPage) {
 }
 
 function _renderCanvasToPage(pdfPage) {
-  let viewport = pdfPage.getViewport(1);
+  const scale = 1.0;
+  let viewport = pdfPage.getViewport({ scale });
   let canvas = document.createElement("canvas");
   let context = canvas.getContext("2d");
   canvas.height = viewport.height;
@@ -175,8 +230,8 @@ function _checkForColor(imgData, texts) {
   });
 }
 
-async function parsePDFColors(pdfData, onProgress, doubleSided) {
-  let pdf = await getDocument(pdfData);
+async function parsePDFColors(pdfData, onProgress, doubleSided, ignoreText) {
+  let pdf = await pdfjs.getDocument(pdfData).promise;
 
   let bwPages = [];
   let colorPages = [];
@@ -188,7 +243,9 @@ async function parsePDFColors(pdfData, onProgress, doubleSided) {
   const parsePage = pageIndex =>
     new Promise(async (resolve, reject) => {
       const pdfPage = await pdf.getPage(pageIndex + 1);
-      const isColor = await checkPDFPageColor(pdfPage);
+      const isColor = ignoreText
+        ? await checkPDFPageImageColor(pdfPage)
+        : await checkPDFPageColor(pdfPage);
 
       if (isColor && colorPages.indexOf(pdfPage.pageIndex) === -1)
         colorPages.push(pdfPage.pageIndex);

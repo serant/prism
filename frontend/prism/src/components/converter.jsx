@@ -27,7 +27,11 @@ const Converter = () => {
     setLoading(false);
   };
 
-  const parsePdf = async (pdfName, pdfData, { collate, doubleSided }) => {
+  const parsePdf = async (
+    pdfName,
+    pdfData,
+    { collate, doubleSided, ignoreText }
+  ) => {
     const data = new Uint8Array(pdfData);
 
     setMessage("Parsing Documents...");
@@ -36,7 +40,8 @@ const Converter = () => {
     let { bwPages, colorPages } = await parsePDFColors(
       data,
       (bw, color, total) => handleProgress(bw, color, total),
-      doubleSided
+      doubleSided,
+      ignoreText
     );
     if (bwPages.length + colorPages.length === 0)
       return failConversion("Document is empty.");
@@ -71,10 +76,14 @@ const Converter = () => {
     setLoading(false);
   };
 
-  const handleConversion = (pdf, { collate, doubleSided }) => {
+  const handleConversion = (pdf, { collate, doubleSided, ignoreText }) => {
     let fileReader = new FileReader();
     fileReader.onload = async () => {
-      await parsePdf(pdf.name, fileReader.result, { collate, doubleSided });
+      await parsePdf(pdf.name, fileReader.result, {
+        collate,
+        doubleSided,
+        ignoreText
+      });
       setConverted(true);
     };
     fileReader.readAsArrayBuffer(pdf);

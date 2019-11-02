@@ -115,10 +115,11 @@ describe("Test Prism App", () => {
  */
 async function launchBrowser() {
   // First create a new instance of Chromium
+  console.log("Launching browser...");
   const browser = await puppeteer.launch({
     executablePath:
       "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    headless: true,
+    headless: false,
     slowMo: 30
   });
 
@@ -173,7 +174,11 @@ async function uploadFile(page, pdfPath) {
 async function selectSettings(settings, page) {
   if (settings.indexOf("doubleSided") > -1)
     await page.click("#doubleSidedSwitch");
+
   if (settings.indexOf("collate") > -1) await page.click("#collateSwitch");
+
+  if (settings.indexOf("ignoreText") > -1)
+    await page.click("#ignoreTextSwitch");
 }
 
 /**

@@ -53,6 +53,18 @@
               "output": "All pages in document are black and white."
             }
           }
+        },
+        {
+          "testName": "Ignore Colored Text BW PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
         }
       ]
     },
@@ -109,6 +121,18 @@
               "output": "All pages in document are colored."
             }
           }
+        },
+        {
+          "testName": "Ignore Colored Text color PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
         }
       ]
     },
@@ -163,6 +187,18 @@
             "html": {
               "selector": "#maxSizeDialog",
               "output": "File size exceed maximum size of 30 MB"
+            }
+          }
+        },
+        {
+          "testName": "Ignore Colored Text oversized PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
             }
           }
         }
@@ -225,6 +261,18 @@
             },
             "pdf": "./testData/4-maxSizePdf/4-4-default/4-Advanced Engineering Mathematics 5th edition"
           }
+        },
+        {
+          "testName": "Ignore Colored Text max size PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
         }
       ]
     },
@@ -279,6 +327,18 @@
             "html": {
               "selector": "#failedReasonHeader",
               "output": "Document is empty."
+            }
+          }
+        },
+        {
+          "testName": "Ignore Colored Text Empty PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
             }
           }
         }
@@ -337,6 +397,18 @@
               "output": "Document must have more than one page."
             }
           }
+        },
+        {
+          "testName": "Ignore Colored Text Single BW PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
         }
       ]
     },
@@ -391,6 +463,18 @@
             "html": {
               "selector": "#failedReasonHeader",
               "output": "Document must have more than one page."
+            }
+          }
+        },
+        {
+          "testName": "Ignore Colored Text Single Page Color PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
             }
           }
         }
@@ -453,6 +537,18 @@
             },
             "pdf": "./testData/8-longPdf/8-4-default/8-Digital Systems Design Using VHDL (Charles Roth)"
           }
+        },
+        {
+          "testName": "Ignore Colored Text long PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
+          }
         }
       ]
     },
@@ -512,6 +608,18 @@
               "output": "Conversion Complete!"
             },
             "pdf": "./testData/9-standardPdf/9-4-default/9-Bubble Tea Machine Final Report"
+          }
+        },
+        {
+          "testName": "Ignore Colored Text standard PDF",
+          "testNumber": 5,
+          "settings": ["ignoreText"],
+          "timeout": 60,
+          "output": {
+            "html": {
+              "selector": "#failedReasonHeader",
+              "output": "All pages in document are black and white."
+            }
           }
         }
       ]

@@ -7,6 +7,8 @@ const Conversion = ({ onStartConversion }) => {
   // State hooks
   const [collate, setCollate] = useState(false);
   const [doubleSided, setDoubleSided] = useState(false);
+  const [ignoreText, setIgnoreText] = useState(false);
+
   const [pdf, setPdf] = useState(null);
 
   // Component variables
@@ -28,6 +30,13 @@ const Conversion = ({ onStartConversion }) => {
       value: collate,
       onChange: () => setCollate(!collate),
       label: "Collate pages"
+    },
+    {
+      name: "ignoreText",
+      description: "Ignores colored text (like headings and page numbers).",
+      value: ignoreText,
+      onChange: () => setIgnoreText(!ignoreText),
+      label: "Ignore Text"
     }
   ];
 
@@ -45,7 +54,9 @@ const Conversion = ({ onStartConversion }) => {
           style={{ padding: "20px" }}
         >
           <ConvertButton
-            onClick={() => onStartConversion(pdf, { collate, doubleSided })}
+            onClick={() =>
+              onStartConversion(pdf, { collate, doubleSided, ignoreText })
+            }
             disabled={pdf ? false : true}
           />
         </div>

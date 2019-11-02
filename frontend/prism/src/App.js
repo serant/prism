@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { Helmet } from "react-helmet";
-
-import "react-pdf/dist/Page/AnnotationLayer.css";
 import "./App.css";
 import FeatureSet from "./components/feature";
 
