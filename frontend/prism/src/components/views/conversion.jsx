@@ -33,10 +33,10 @@ const Conversion = ({ onStartConversion }) => {
     },
     {
       name: "ignoreText",
-      description: "Ignores colored text (like headings and page numbers).",
+      description: "Useful if you only care about printing pictures in color.",
       value: ignoreText,
       onChange: () => setIgnoreText(!ignoreText),
-      label: "Ignore Text"
+      label: "Ignore Colored Text"
     }
   ];
 

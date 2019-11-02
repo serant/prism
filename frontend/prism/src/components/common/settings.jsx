@@ -15,7 +15,7 @@ const Settings = ({ settings }) => {
       {settings.map(s => (
         <ListGroup.Item key={`${s["name"]}Switch`}>
           <Row>
-            <Col lg={5}>
+            <Col md="auto">
               <Switch
                 style={{ padding: "0px" }}
                 id={`${s["name"]}Switch`}
